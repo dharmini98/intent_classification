@@ -65,3 +65,31 @@ loss, accuracy = model.evaluate(X_test, y_test)
 
 # Save the model to a file
 model.save('text_classification_model.h5')
+
+from tensorflow.keras.models import load_model
+
+# Load the saved model
+loaded_model = load_model('text_classification_model.h5')
+
+# Example: Make predictions on new data
+#new_data = ["I watched a great movie last night!", "Planning to grab dinner at that new place."]
+new_data = [str(input("enter data:::   "))]
+# Tokenize and pad the new data
+new_sequences = tokenizer.texts_to_sequences(new_data)
+new_padded_sequences = pad_sequences(new_sequences, maxlen=max_sequence_length, padding='post')
+
+# Make predictions
+predictions = loaded_model.predict(new_padded_sequences)
+# If you have used one-hot encoding for labels, you can use argmax to get the predicted class
+predicted_classes = predictions.argmax(axis=1)
+
+# Mapping dictionary
+class_mapping = {0: "Dinner", 1: "Movies"}
+
+# Convert numeric predictions to string labels
+predicted_class_strings = [class_mapping[label] for label in predicted_classes]
+
+# Print the predictions with string labels
+for text, predicted_class_string in zip(new_data, predicted_class_strings):
+    print(f"Text: {text}\nPredicted Class: {predicted_class_string}\n")
+
