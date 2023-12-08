@@ -59,13 +59,26 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=
 # Train the model
 model.fit(X_train, y_train, epochs=100
           , batch_size=1, validation_data=(X_test, y_test))
+# Save the tokenizer and label encoder to files
+with open('tokenizer.pkl', 'wb') as handle:
+    pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
+with open('label_encoder.pkl', 'wb') as handle:
+    pickle.dump(label_encoder, handle, protocol=pickle.HIGHEST_PROTOCOL)
 # Evaluate the model
 loss, accuracy = model.evaluate(X_test, y_test)
 
 # Save the model to a file
 model.save('text_classification_model.h5')
+# Inference: Load the saved artifacts and use the model for predictions
+# Load tokenizer and label encoder
+with open('tokenizer.pkl', 'rb') as handle:
+    loaded_tokenizer = pickle.load(handle)
 
+with open('label_encoder.pkl', 'rb') as handle:
+    loaded_label_encoder = pickle.load(handle)
+
+import h5py
 from tensorflow.keras.models import load_model
 
 # Load the saved model
