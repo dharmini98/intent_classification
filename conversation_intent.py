@@ -57,8 +57,39 @@ model = Sequential([
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
 # Train the model
-model.fit(X_train, y_train, epochs=100
-          , batch_size=1, validation_data=(X_test, y_test))
+#model.fit(X_train, y_train, epochs=100
+#          , batch_size=1, validation_data=(X_test, y_test))
+
+import matplotlib.pyplot as plt
+# Train the model
+history = model.fit(X_train, y_train, epochs=15, batch_size=1, validation_data=(X_test, y_test))
+
+# Plot the learning curves
+plt.figure(figsize=(12, 4))
+
+# Plot training & validation accuracy values
+plt.subplot(1, 2, 1)
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.title('Model accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend(['Train', 'Validation'], loc='upper left')
+
+# Plot training & validation loss values
+plt.subplot(1, 2, 2)
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('Model loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend(['Train', 'Validation'], loc='upper left')
+
+plt.tight_layout()
+plt.show()
+
+
+
 # Save the tokenizer and label encoder to files
 with open('tokenizer.pkl', 'wb') as handle:
     pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -70,6 +101,13 @@ loss, accuracy = model.evaluate(X_test, y_test)
 
 # Save the model to a file
 model.save('text_classification_model.h5')
+
+# Evaluate the model on the test set
+loss, accuracy = model.evaluate(X_test, y_test)
+print(f"Test Loss: {loss:.4f}")
+print(f"Test Accuracy: {accuracy:.4f}")
+
+
 # Inference: Load the saved artifacts and use the model for predictions
 # Load tokenizer and label encoder
 with open('tokenizer.pkl', 'rb') as handle:
